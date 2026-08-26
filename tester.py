@@ -4,8 +4,7 @@ from app.models.ledger import Direction
 
 db = SessionLocal()
 
-# you'll need two real account_ids that exist in your `accounts` table
-# for now, insert two rows manually via psql/pgAdmin if you don't have any yet
+
 
 """entries = [
     {"account_id": "911", "amount": 300, "direction": Direction.DEBIT},
