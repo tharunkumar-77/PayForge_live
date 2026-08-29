@@ -44,10 +44,16 @@ def get_balance(db,account_id):
     return balance
 
 def transfer(db, from_account_id, to_account_id, amount, idempotency_key, description=None):
+
     ids_in_order = sorted([from_account_id, to_account_id])
 
     for acc_id in ids_in_order:
         db.query(Account).filter(Account.id == acc_id).with_for_update().first()
+
+    # NEW: check balance here, after locking, before allowing the debit
+    current_balance = get_balance(db, from_account_id)
+    if current_balance < amount:
+        raise ValueError(f"Insufficient balance: has {current_balance}, needs {amount}")
 
     entries = [
         {"account_id": from_account_id, "amount": amount, "direction": Direction.DEBIT},
