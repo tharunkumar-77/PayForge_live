@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routes.wallets import router
+from OLD.app.routes.wallets import router
 
 app = FastAPI(title="PayForge")
 

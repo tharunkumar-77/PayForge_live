@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from sqlalchemy import (
     Column, String, Integer, ForeignKey, DateTime, Enum, CheckConstraint)
 from sqlalchemy.orm import relationship
-from app.database import Base
+from OLD.app.database import Base
 
 
 def gen_uuid():

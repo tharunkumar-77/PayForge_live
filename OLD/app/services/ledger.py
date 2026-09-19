@@ -1,6 +1,6 @@
-from app.database import Base,SessionLocal
+from OLD.app.database import Base,SessionLocal
 
-from app.models.ledger import Transaction,TransactionStatus,Direction,LedgerEntry,AccountType,Account
+from OLD.app.models.ledger import Transaction,TransactionStatus,Direction,LedgerEntry,AccountType,Account
 
 
 def post_transaction(db,entries,idempotency_key,description=None):
@@ -61,3 +61,17 @@ def transfer(db, from_account_id, to_account_id, amount, idempotency_key, descri
     ]
 
     return post_transaction(db, entries, idempotency_key, description)
+
+from sqlalchemy.exc import IntegrityError
+
+def safe_transfer(db, from_account_id, to_account_id, amount, idempotency_key, description=None):
+    existing = db.query(Transaction).filter(Transaction.idempotency_key == idempotency_key).first()
+    if existing:
+        return existing
+
+    try:
+        return transfer(db, from_account_id, to_account_id, amount, idempotency_key, description)
+    except IntegrityError:
+        db.rollback()
+        existing = db.query(Transaction).filter(Transaction.idempotency_key == idempotency_key).first()
+        return existing

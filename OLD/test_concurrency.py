@@ -1,6 +1,7 @@
 import threading
-from app.database import SessionLocal
-from app.services.ledger import transfer, get_balance
+from OLD.app.database import SessionLocal
+from OLD.app.services.ledger import transfer, get_balance
+from OLD.app.services.ledger import safe_transfer
 
 """def do_transfer(idem_key):
     db = SessionLocal()
@@ -35,7 +36,7 @@ def do_transfer(idem_key):
     db=SessionLocal()
 
     try:
-        transfer(db,from_account_id="912",to_account_id="911",amount=10,idempotency_key=idem_key)
+        safe_transfer(db, from_account_id="912", to_account_id="911", amount=10, idempotency_key=idem_key)
         print("success:",idem_key)
     except Exception as e:
         print("failed",idem_key,e)
@@ -46,7 +47,7 @@ db = SessionLocal()
 print("Before — 911:", get_balance(db, "911"), "912:", get_balance(db, "912"))
 db.close()
 
-threads = [threading.Thread(target=do_transfer, args=(f"fifty-test-{i}",)) for i in range(50)]
+threads = [threading.Thread(target=do_transfer, args=("same-key-test",)) for _ in range(50)]
 
 for t in threads:
     t.start()

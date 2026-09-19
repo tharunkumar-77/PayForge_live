@@ -1,6 +1,6 @@
-from app.database import SessionLocal
-from app.services.ledger import post_transaction,get_balance,transfer
-from app.models.ledger import Direction
+from OLD.app.database import SessionLocal
+from OLD.app.services.ledger import post_transaction,get_balance,transfer
+from OLD.app.models.ledger import Direction
 
 db = SessionLocal()
 
