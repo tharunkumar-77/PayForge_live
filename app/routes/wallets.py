@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from OLD.app.database import get_db
-from OLD.app.services.ledger import post_transaction, get_balance
+from app.database import get_db
+from app.services.ledger import post_transaction, get_balance
 
 router = APIRouter()
 

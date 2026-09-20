@@ -1,6 +1,7 @@
-from OLD.app.database import Base,SessionLocal
+from app.database import Base,SessionLocal
 
-from OLD.app.models.ledger import Transaction,TransactionStatus,Direction,LedgerEntry,AccountType,Account
+from app.models.ledger import Transaction,TransactionStatus,Direction,LedgerEntry,AccountType,Account
+from app.services.audit import log_audit
 
 
 def post_transaction(db,entries,idempotency_key,description=None):
@@ -25,8 +26,10 @@ def post_transaction(db,entries,idempotency_key,description=None):
     db.flush()
 
     for entry in ledger:
+        log_audit(db, "transaction_posted", transaction.id, f"{len(entries)} entries")
         entry.transaction_id=transaction.id
         db.add(entry)
+        
 
     db.commit()
     db.refresh(transaction)
@@ -75,3 +78,5 @@ def safe_transfer(db, from_account_id, to_account_id, amount, idempotency_key, d
         db.rollback()
         existing = db.query(Transaction).filter(Transaction.idempotency_key == idempotency_key).first()
         return existing
+
+
