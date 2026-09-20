@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 
-app=FastAPI()
+from OLD.app.routes.wallets import router
+
+app = FastAPI(title="PayForge")
+
+app.include_router(router)
+
 
 @app.get("/")
-def home():
-    return {"status":"OK"}
+def root():
+    return {"status": "PayForge API running"}
