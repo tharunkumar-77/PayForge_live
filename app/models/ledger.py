@@ -2,7 +2,7 @@ import uuid
 import enum
 from datetime import datetime, timezone
 
-from sqlalchemy import (
+from sqlalchemy import ( Index, UniqueConstraint,
     Column, String, Integer, ForeignKey, DateTime, Enum, CheckConstraint)
 from sqlalchemy.orm import relationship
 from app.database import Base
@@ -39,8 +39,17 @@ class Account(Base):
     type = Column(Enum(AccountType), nullable=False)
     currency = Column(String(3), nullable=False, default="INR")
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    version = Column(Integer, nullable=False, default=0)
 
     entries = relationship("LedgerEntry", back_populates="account")
+
+    __table_args__ = (
+        CheckConstraint("char_length(currency) = 3", name="ck_account_currency_length"),
+    )
+
+    __mapper_args__ = {
+        "version_id_col": version
+    }
 
 
 class Transaction(Base):
@@ -53,6 +62,14 @@ class Transaction(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     entries = relationship("LedgerEntry", back_populates="transaction")
+
+    __table_args__ = (
+        Index("ix_transaction_idempotency_key", "idempotency_key"),
+        CheckConstraint(
+            "status IN ('pending', 'posted', 'failed', 'reversed')",
+            name="ck_transaction_status"
+        ),
+    )
 
 
 class LedgerEntry(Base):
@@ -69,4 +86,6 @@ class LedgerEntry(Base):
     transaction = relationship("Transaction", back_populates="entries")
 
     __table_args__ = (
-        CheckConstraint("amount > 0", name="positive_amount"),)
+        Index("ix_ledger_entry_account_id", "account_id"),
+        CheckConstraint("amount > 0", name="positive_amount"),
+    )

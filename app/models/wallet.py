@@ -1,7 +1,9 @@
-from sqlalchemy import Column,String,Integer,ForeignKey
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
+
 from app.database import Base
 from app.models.ledger import gen_uuid
+
 
 class Wallet(Base):
     __tablename__ = "wallets"

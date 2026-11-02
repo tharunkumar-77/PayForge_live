@@ -1,0 +1,149 @@
+/* Premium dark‑mode dashboard styling */
+:root {
+  --bg-color: hsl(220, 10%, 12%);
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --accent: hsl(210, 70%, 55%);
+  --text-primary: hsl(0, 0%, 95%);
+  --text-secondary: hsl(0, 0%, 70%);
+  --border-radius: 12px;
+  --transition: 0.2s ease;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+header h1 {
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+nav button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+nav button.active, nav button:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+section {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  transition: var(--transition);
+}
+
+section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 12px rgba(0,0,0,0.3);
+}
+
+section h2 {
+  margin-bottom: 1rem;
+  color: var(--accent);
+  font-size: 1.25rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+input, select, button[type="submit"] {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--border-radius);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.1);
+}
+
+button[type="submit"] {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background: hsl(210, 70%, 45%);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+thead {
+  background: var(--card-bg);
+}
+
+th, td {
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+@media (max-width: 600px) {
+  header, main {
+    padding: 1rem;
+  }
+  nav {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

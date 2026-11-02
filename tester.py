@@ -1,10 +1,3 @@
-from OLD.app.database import SessionLocal
-from OLD.app.services.ledger import post_transaction,get_balance,transfer
-from OLD.app.models.ledger import Direction
-
-db = SessionLocal()
-
-
 
 """entries = [
     {"account_id": "911", "amount": 300, "direction": Direction.DEBIT},
@@ -42,15 +35,54 @@ print("Transaction:", txn.id, txn.status)
 print("911 balance:", get_balance(db, "911"))
 print("912 balance:", get_balance(db, "912"))"""
 
- 
-db = SessionLocal()
+import uuid
 
-print("Before — 911:", get_balance(db, "911"), "912:", get_balance(db, "912"))
+from app.database import SessionLocal
+from app.models.ledger import Account
+from app.services.ledger import get_balance, safe_transfer
 
-txn = transfer(db, from_account_id="911", to_account_id="912", amount=100, idempotency_key="transfer-test-001")
-print("Transfer:", txn.id, txn.status)
 
-print("After — 911:", get_balance(db, "911"), "912:", get_balance(db, "912"))
+def main() -> None:
+    db = SessionLocal()
+    try:
+        alice = db.query(Account).filter(Account.name == "Alice Test Wallet").first()
+        bob = db.query(Account).filter(Account.name == "Bob Test Wallet").first()
+
+        if not alice or not bob:
+            raise RuntimeError(
+                "Seed accounts not found. Run `python seed_test_data.py` first."
+            )
+
+        print(
+            "Before — Alice:",
+            get_balance(db, alice.id),
+            "Bob:",
+            get_balance(db, bob.id),
+        )
+
+        idem_key = f"transfer-test-{uuid.uuid4().hex[:8]}"
+        txn = safe_transfer(
+            db,
+            from_account_id=alice.id,
+            to_account_id=bob.id,
+            amount=100,
+            idempotency_key=idem_key,
+            description="Tester script transfer",
+        )
+        print("Transfer:", txn.id, txn.status.value)
+
+        print(
+            "After  — Alice:",
+            get_balance(db, alice.id),
+            "Bob:",
+            get_balance(db, bob.id),
+        )
+    finally:
+        db.close()
+
+
+if __name__ == "__main__":
+    main()
 
 
 
